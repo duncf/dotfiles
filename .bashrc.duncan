@@ -1,0 +1,13 @@
+export EDITOR="emacs -nw"
+export EMAIL=duncan@duncf.ca
+export PATH=~/bin:$PATH
+export PYTHONSTARTUP=~/.pythonstartup.py
+
+# "Screen SSH" -- ssh into a remote machine in a new screen window
+function sssh {
+    target=$1
+    shift 1
+    shortname=`echo $target | cut -d. -f1`
+    screen -t $shortname ssh $target $*
+}
+
