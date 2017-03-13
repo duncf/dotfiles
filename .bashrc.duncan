@@ -13,3 +13,5 @@ HISTTIMEFORMAT="%F %T "
 HISTCONTROL=ignoreboth
 
 export PROMPT_COMMAND="history -a"
+
+bind 'set enable-bracketed-paste on'
