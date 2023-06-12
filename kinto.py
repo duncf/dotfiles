@@ -41,6 +41,7 @@ terminals = [term.casefold() for term in terminals]
 termStr = "|".join(str("^" + x + "$") for x in terminals)
 
 mscodes = ["code", "vscodium"]
+mscodes.append("code - insiders")  # duncf
 codeStr = "|".join(str("^" + x + "$") for x in mscodes)
 
 sublimes = ["Sublime_text", "subl"]
@@ -56,7 +57,7 @@ remotes = [
     "qemu-system-.*",
     "qemu",
     "Spicy",
-    "Virt-manager",
+    # "Virt-manager", # duncf - this is super annoying.
     "VirtualBox",
     "VirtualBox Machine",
     "xfreerdp",
@@ -113,6 +114,16 @@ define_multipurpose_modmap(
     {}  # Placeholder
 )
 
+# duncf 2023-05-30
+define_modmap(
+    {
+        # AFAICT, most of the keybindings below assume that the "command key" is
+        # bound to Right Ctrl, so bind "Windows key" to Right Ctrl.
+        Key.LEFT_META: Key.RIGHT_CTRL,
+        Key.CAPSLOCK: Key.LEFT_CTRL,
+    }
+)
+
 # Fix for avoiding modmapping when using Synergy keyboard/mouse sharing.
 # Synergy doesn't set a wm_class, so this may cause issues with other
 # applications that also don't set the wm_class.
@@ -120,73 +131,69 @@ define_multipurpose_modmap(
 # define_conditional_modmap(lambda wm_class: wm_class == '', {})
 
 # [Global modemap] Change modifier keys as in xmodmap
-define_conditional_modmap(
-    lambda wm_class: wm_class.casefold() not in terminals,
-    {
-        # Key.CAPSLOCK: Key.RIGHT_CTRL,   # Caps2Cmd
-        # Key.LEFT_META: Key.RIGHT_CTRL,  # Caps2Cmd - Chromebook
-        # - IBM
-        # Key.LEFT_ALT: Key.RIGHT_CTRL,   # IBM
-        # Key.LEFT_CTRL: Key.LEFT_ALT,    # IBM
-        # Key.CAPSLOCK: Key.LEFT_META,    # IBM
-        # Key.RIGHT_ALT: Key.RIGHT_CTRL,  # IBM - Multi-language (Remove)
-        # Key.RIGHT_CTRL: Key.RIGHT_ALT,  # IBM - Multi-language (Remove)
-        # - Chromebook
-        # Key.LEFT_ALT: Key.RIGHT_CTRL,   # Chromebook
-        # Key.LEFT_CTRL: Key.LEFT_ALT,    # Chromebook
-        # Key.RIGHT_ALT: Key.RIGHT_CTRL,  # Chromebook - Multi-language (Remove)
-        # Key.RIGHT_CTRL: Key.RIGHT_ALT,  # Chromebook - Multi-language (Remove)
-        # - Default Mac/Win
-        # - Default Win
-        # Key.LEFT_ALT: Key.RIGHT_CTRL,   # WinMac
-        # Key.LEFT_META: Key.LEFT_ALT,    # WinMac
-        # Key.LEFT_CTRL: Key.LEFT_META,   # WinMac
-        # Key.RIGHT_ALT: Key.RIGHT_CTRL,  # WinMac - Multi-language (Remove)
-        # Key.RIGHT_META: Key.RIGHT_ALT,  # WinMac - Multi-language (Remove)
-        # Key.RIGHT_CTRL: Key.RIGHT_META, # WinMac - Multi-language (Remove)
-        # - Mac Only
-        # Key.LEFT_META: Key.RIGHT_CTRL,  # Mac
-        # Key.LEFT_CTRL: Key.LEFT_META,   # Mac
-        # Key.RIGHT_META: Key.RIGHT_CTRL, # Mac - Multi-language (Remove)
-        # Key.RIGHT_CTRL: Key.RIGHT_META, # Mac - Multi-language (Remove)
-    },
-)
+# define_conditional_modmap(lambda wm_class: wm_class.casefold() not in terminals,{
+ignored = {
+    # Key.CAPSLOCK: Key.RIGHT_CTRL,   # Caps2Cmd
+    # Key.LEFT_META: Key.RIGHT_CTRL,  # Caps2Cmd - Chromebook
+    # - IBM
+    # Key.LEFT_ALT: Key.RIGHT_CTRL,   # IBM
+    # Key.LEFT_CTRL: Key.LEFT_ALT,    # IBM
+    # Key.CAPSLOCK: Key.LEFT_META,    # IBM
+    # Key.RIGHT_ALT: Key.RIGHT_CTRL,  # IBM - Multi-language (Remove)
+    # Key.RIGHT_CTRL: Key.RIGHT_ALT,  # IBM - Multi-language (Remove)
+    # - Chromebook
+    # Key.LEFT_ALT: Key.RIGHT_CTRL,   # Chromebook
+    # Key.LEFT_CTRL: Key.LEFT_ALT,    # Chromebook
+    # Key.RIGHT_ALT: Key.RIGHT_CTRL,  # Chromebook - Multi-language (Remove)
+    # Key.RIGHT_CTRL: Key.RIGHT_ALT,  # Chromebook - Multi-language (Remove)
+    # - Default Mac/Win
+    # -- Default Win
+    Key.LEFT_ALT: Key.RIGHT_CTRL,  # WinMac
+    Key.LEFT_META: Key.LEFT_ALT,  # WinMac
+    Key.LEFT_CTRL: Key.LEFT_META,  # WinMac
+    Key.RIGHT_ALT: Key.RIGHT_CTRL,  # WinMac - Multi-language (Remove)
+    Key.RIGHT_META: Key.RIGHT_ALT,  # WinMac - Multi-language (Remove)
+    Key.RIGHT_CTRL: Key.RIGHT_META,  # WinMac - Multi-language (Remove)
+    # - Mac Only
+    # Key.LEFT_META: Key.RIGHT_CTRL,  # Mac
+    # Key.LEFT_CTRL: Key.LEFT_META,   # Mac
+    # Key.RIGHT_META: Key.RIGHT_CTRL, # Mac - Multi-language (Remove)
+    # Key.RIGHT_CTRL: Key.RIGHT_META, # Mac - Multi-language (Remove)
+}
 
 # [Conditional modmap] Change modifier keys in certain applications
-define_conditional_modmap(
-    re.compile(termStr, re.IGNORECASE),
-    {
-        # - IBM
-        # Key.LEFT_ALT: Key.RIGHT_CTRL,     # IBM
-        # # Left Ctrl Stays Left Ctrl
-        # Key.CAPSLOCK: Key.LEFT_ALT,       # IBM
-        # Key.RIGHT_ALT: Key.RIGHT_CTRL,    # IBM - Multi-language (Remove)
-        # Key.RIGHT_CTRL: Key.RIGHT_ALT,    # IBM
-        # # Right Meta does not exist on chromebooks
-        # Key.RIGHT_ALT: Key.RIGHT_CTRL,  # IBM - Multi-language (Remove)
-        # Key.RIGHT_CTRL: Key.RIGHT_ALT,  # IBM - Multi-language (Remove)
-        # - Chromebook
-        # Key.LEFT_ALT: Key.RIGHT_CTRL,     # Chromebook
-        # # Left Ctrl Stays Left Ctrl
-        # Key.LEFT_META: Key.LEFT_ALT,      # Chromebook
-        # Key.RIGHT_ALT: Key.RIGHT_CTRL,    # Chromebook - Multi-language (Remove)
-        # Key.RIGHT_CTRL: Key.RIGHT_ALT,    # Chromebook
-        # # Right Meta does not exist on chromebooks
-        # - Default Mac/Win
-        # - Default Win
-        # Key.LEFT_ALT: Key.RIGHT_CTRL,   # WinMac
-        # Key.LEFT_META: Key.LEFT_ALT,    # WinMac
-        # Key.LEFT_CTRL: Key.LEFT_CTRL,   # WinMac
-        # Key.RIGHT_ALT: Key.RIGHT_CTRL,  # WinMac - Multi-language (Remove)
-        # Key.RIGHT_META: Key.RIGHT_ALT,  # WinMac - Multi-language (Remove)
-        # Key.RIGHT_CTRL: Key.LEFT_CTRL,  # WinMac - Multi-language (Remove)
-        # - Mac Only
-        # Key.LEFT_META: Key.RIGHT_CTRL,  # Mac
-        # # Left Ctrl Stays Left Ctrl
-        # Key.RIGHT_META: Key.RIGHT_CTRL, # Mac - Multi-language (Remove)
-        # Key.RIGHT_CTRL: Key.LEFT_CTRL,  # Mac - Multi-language (Remove)
-    },
-)
+# define_conditional_modmap(re.compile(termStr, re.IGNORECASE), {
+ignored = {
+    # - IBM
+    # Key.LEFT_ALT: Key.RIGHT_CTRL,     # IBM
+    # # Left Ctrl Stays Left Ctrl
+    # Key.CAPSLOCK: Key.LEFT_ALT,       # IBM
+    # Key.RIGHT_ALT: Key.RIGHT_CTRL,    # IBM - Multi-language (Remove)
+    # Key.RIGHT_CTRL: Key.RIGHT_ALT,    # IBM
+    # # Right Meta does not exist on chromebooks
+    # Key.RIGHT_ALT: Key.RIGHT_CTRL,  # IBM - Multi-language (Remove)
+    # Key.RIGHT_CTRL: Key.RIGHT_ALT,  # IBM - Multi-language (Remove)
+    # - Chromebook
+    # Key.LEFT_ALT: Key.RIGHT_CTRL,     # Chromebook
+    # # Left Ctrl Stays Left Ctrl
+    # Key.LEFT_META: Key.LEFT_ALT,      # Chromebook
+    # Key.RIGHT_ALT: Key.RIGHT_CTRL,    # Chromebook - Multi-language (Remove)
+    # Key.RIGHT_CTRL: Key.RIGHT_ALT,    # Chromebook
+    # # Right Meta does not exist on chromebooks
+    # - Default Mac/Win
+    # -- Default Win
+    Key.LEFT_ALT: Key.RIGHT_CTRL,  # WinMac
+    Key.LEFT_META: Key.LEFT_ALT,  # WinMac
+    Key.LEFT_CTRL: Key.LEFT_CTRL,  # WinMac
+    Key.RIGHT_ALT: Key.RIGHT_CTRL,  # WinMac - Multi-language (Remove)
+    Key.RIGHT_META: Key.RIGHT_ALT,  # WinMac - Multi-language (Remove)
+    Key.RIGHT_CTRL: Key.LEFT_CTRL,  # WinMac - Multi-language (Remove)
+    # - Mac Only
+    # Key.LEFT_META: Key.RIGHT_CTRL,  # Mac
+    # # Left Ctrl Stays Left Ctrl
+    # Key.RIGHT_META: Key.RIGHT_CTRL, # Mac - Multi-language (Remove)
+    # Key.RIGHT_CTRL: Key.LEFT_CTRL,  # Mac - Multi-language (Remove)
+}
 
 # Keybindings for IntelliJ
 define_keymap(
@@ -665,7 +672,8 @@ define_keymap(
         K("RC-H"): K(
             "Super-h"
         ),  # Default SL - Minimize app (gnome/budgie/popos/fedora)
-        K("Alt-Tab"): pass_through_key,  # Default - Cmd Tab - App Switching Default
+        # K("Alt-Tab"): pass_through_key,                 # Default - Cmd Tab - App Switching Default
+        K("Alt-Tab"): K("Alt-Shift-End"),  # duncf
         K("RC-Tab"): K("Alt-Tab"),  # Default - Cmd Tab - App Switching Default
         K("RC-Shift-Tab"): K(
             "Alt-Shift-Tab"
@@ -733,6 +741,20 @@ define_keymap(
         # K(""): K(""),                                 #
     },
     "General GUI",
+)
+
+define_keymap(
+    lambda wm_class: wm_class.casefold() in mscodes,
+    {
+        # duncf
+        # From terminal section below. Might make sense to limit to vscode.
+        K("RC-Z"): K("C-Shift-Z"),
+        K("RC-Y"): K("C-Shift-Y"),
+        K("RC-V"): K("C-Shift-V"),
+        K("RC-X"): K("C-Shift-X"),
+        K("RC-C"): K("C-Shift-C"),
+        K("RC-V"): K("C-Shift-V"),
+    },
 )
 
 define_keymap(
